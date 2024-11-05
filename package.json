@@ -1,0 +1,31 @@
+{
+  "name": "ecommerce-api",
+  "version": "1.0.0",
+  "description": "An ecommerce API-project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/sundaram201224/New-one.git"
+  },
+  "keywords": [
+    "ecommerce",
+    "api",
+    "nodejs"
+  ],
+  "author": "sundaram",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sundaram201224/New-one/issues"
+  },
+  "homepage": "https://github.com/sundaram201224/New-one#readme",
+  "dependencies": {
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
