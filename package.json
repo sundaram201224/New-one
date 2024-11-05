@@ -1,6 +1,7 @@
 {
   "name": "ecommerce-api",
   "version": "1.0.0",
+  "type": "commonjs",
   "description": "An ecommerce API-project",
   "main": "index.js",
   "scripts": {

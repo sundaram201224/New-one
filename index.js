@@ -11,15 +11,19 @@ const dataFilePath = path.join(__dirname, 'data/products.json');
 
 // Get all products
 app.get('/products', (req, res) => {
+  
   fs.readFile(dataFilePath, 'utf8', (err, data) => {
     if (err) {
+      
       res.status(500).send('Error reading the data file');
       return;
     }
+    
     res.setHeader('Content-Type', 'application/json');
     res.status(200).send(data);
   });
 });
+console.log()
 
 // Add a new product
 app.post('/products', (req, res) => {

@@ -1,7 +1,5 @@
-
 {
   "products": [
-   
     {
       "id": 1,
       "name": "Samsung m31",
@@ -212,18 +210,26 @@
       "rating": 4.7
     },
     {
-      "model": "Surface Pro 8",
-      "brand": "Microsoft",
-      "price": 1099,
-      "category": "Tablet",
-      "features": {
-        "processor": "Intel i5",
-        "ram": "8GB",
-        "storage": "256GB SSD",
-        "battery": "Battery up to 13 hours"
-      },
-      "stock": 15,
+      "name": "Samsung m30",
+      "model": "M30",
+      "brand": "Samsung",
+      "price": 20.99,
+      "description": "smartphone with 5G connectivity and 120Hz display.",
+      "category": "Mobile",
+      "stock": 28,
+      "rating": 4,
       "id": 21
+    },
+    {
+      "name": "oppo a1k",
+      "model": "a1k",
+      "brand": "oppo",
+      "price": 20.99,
+      "description": "smartphone with 4G connectivity and 120Hz display.",
+      "category": "Mobile-tablet",
+      "stock": 27,
+      "rating": 4.9,
+      "id": 22
     }
   ]
 }
