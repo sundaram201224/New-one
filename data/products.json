@@ -45,17 +45,6 @@
       "rating": 4.6
     },
     {
-      "id": 5,
-      "name": "Gaming Console",
-      "model": "PlayStation 5",
-      "brand": "Sony",
-      "price": 499.99,
-      "description": "Next-gen gaming with ultra-fast SSD and ray-tracing support.",
-      "category": "Gaming",
-      "stock": 10,
-      "rating": 4.9
-    },
-    {
       "id": 6,
       "name": "Wireless Earbuds",
       "model": "AirPods Pro",
@@ -230,6 +219,17 @@
       "stock": 27,
       "rating": 4.9,
       "id": 22
+    },
+    {
+      "name": "Samsung m31",
+      "model": "M31 pro",
+      "brand": "Samsung",
+      "price": 29.99,
+      "description": "Flagship smartphone with 5G connectivity and 120Hz display.",
+      "category": "Mobile Phones",
+      "stock": 25,
+      "rating": 4.5,
+      "id": null
     }
   ]
 }

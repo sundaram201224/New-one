@@ -1,145 +1,108 @@
 const express = require('express');
-const fs = require('fs');
-const path = require('path');
+const { readDataFile, writeDataFile, filePath } = require('./helper.js');
+
 const app = express();
 const PORT = 4000;
 
 app.use(express.json());
 
-// Define the path to the JSON data file
-const dataFilePath = path.join(__dirname, 'data/products.json');
-
 // Get all products
-app.get('/products', (req, res) => {
-  
-  fs.readFile(dataFilePath, 'utf8', (err, data) => {
-    if (err) {
-      
-      res.status(500).send('Error reading the data file');
-      return;
-    }
-    
-    res.setHeader('Content-Type', 'application/json');
+app.get("/products", async (req, res) => {
+  try {
+    const data = await readDataFile();
+    res.setHeader("Content-Type", "application/json");
     res.status(200).send(data);
-  });
+  } catch (error) {
+    res.status(500).send("Error reading the data file");
+  }
 });
-console.log()
 
-// Add a new product
-app.post('/products', (req, res) => {
+// POST route to add a new product
+app.post('/products', async (req, res) => {
   const newProduct = req.body;
 
-  fs.readFile(dataFilePath, 'utf8', (err, data) => {
-    if (err) {
-      res.status(500).send('Error reading the data file');
-      return;
-    }
+  try {
+    const data = await readDataFile();
+    newProduct.id = data.products.length ? Math.max(data.products.map(p => p.id)) + 1 : 1;
+    data.products.push(newProduct); 
 
-    const jsonData = JSON.parse(data);
-    newProduct.id = jsonData.products.length + 1;
-    jsonData.products.push(newProduct);
+    await writeDataFile(JSON.stringify(data, null, 2)); 
 
-    fs.writeFile(dataFilePath, JSON.stringify(jsonData, null, 2), (err) => {
-      if (err) {
-        res.status(500).send('Error writing the data file');
-        return;
-      }
-      res.status(201).json(newProduct);
-    });
-  });
+    res.status(201).json(newProduct);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error reading or writing the data file');
+  }
 });
-
 // Delete a product by model name
-app.delete('/products/:model', (req, res) => {
+app.delete('/products/:model', async (req, res) => {
   const modelName = req.params.model;
 
-  fs.readFile(dataFilePath, 'utf8', (err, data) => {
-    if (err) {
-      res.status(500).send('Error reading the data file');
-      return;
-    }
+  try {
+    const data = await readDataFile();
+    const initialLength = data.products.length;
 
-    const jsonData = JSON.parse(data);
-    const initialLength = jsonData.products.length;
-    jsonData.products = jsonData.products.filter(
+    // Filter out the product with the specified model name
+    data.products = data.products.filter(
       (product) => product.model.toLowerCase() !== modelName.toLowerCase()
     );
 
-    if (jsonData.products.length === initialLength) {
-      res.status(404).send('Product not found');
-      return;
+    if (data.products.length === initialLength) {
+      return res.status(404).send('Product not found');
     }
 
-    fs.writeFile(dataFilePath, JSON.stringify(jsonData, null, 2), (err) => {
-      if (err) {
-        res.status(500).send('Error writing the data file');
-        return;
-      }
-      res.status(204).send('Product deleted successfully');
-    });
-  });
+    await writeDataFile(JSON.stringify(data, null, 2));
+    res.status(204).send('Product deleted successfully');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error processing the request');
+  }
 });
-
 // Update a product by ID
-app.put('/products/:id', (req, res) => {
+app.put('/products/:id', async (req, res) => {
   const productId = parseInt(req.params.id, 10);
   const updatedData = req.body;
 
-  fs.readFile(dataFilePath, 'utf8', (err, data) => {
-    if (err) {
-      res.status(500).send('Error reading the data file');
-      return;
-    }
-
-    const jsonData = JSON.parse(data);
-    const productIndex = jsonData.products.findIndex((product) => product.id === productId);
+  try {
+    const data = await readDataFile();
+    const productIndex = data.products.findIndex((product) => product.id === productId);
 
     if (productIndex === -1) {
-      res.status(404).send('Product not found');
-      return;
+      return res.status(404).send('Product not found');
     }
 
-    jsonData.products[productIndex] = { ...jsonData.products[productIndex], ...updatedData };
+    // Update the product with new data
+    data.products[productIndex] = { ...data.products[productIndex], ...updatedData };
 
-    fs.writeFile(dataFilePath, JSON.stringify(jsonData, null, 2), (err) => {
-      if (err) {
-        res.status(500).send('Error writing the data file');
-        return;
-      }
-      res.status(200).json(jsonData.products[productIndex]);
-    });
-  });
+    await writeDataFile(JSON.stringify(data, null, 2)); 
+    res.status(200).json(data.products[productIndex]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error processing the request');
+  }
 });
-
 // Partially update a product by ID
-app.patch('/products/:id', (req, res) => {
+app.patch('/products/:id', async (req, res) => {
   const productId = parseInt(req.params.id, 10);
   const updatedFields = req.body;
 
-  fs.readFile(dataFilePath, 'utf8', (err, data) => {
-    if (err) {
-      res.status(500).send('Error reading the data file');
-      return;
-    }
-
-    const jsonData = JSON.parse(data);
-    const productIndex = jsonData.products.findIndex((product) => product.id === productId);
+  try {
+    const data = await readDataFile(); 
+    const productIndex = data.products.findIndex((product) => product.id === productId);
 
     if (productIndex === -1) {
-      res.status(404).send('Product not found');
-      return;
+      return res.status(404).send('Product not found');
     }
 
-    jsonData.products[productIndex] = { ...jsonData.products[productIndex], ...updatedFields };
+    // Update the product with new fields
+    data.products[productIndex] = { ...data.products[productIndex], ...updatedFields };
 
-    fs.writeFile(dataFilePath, JSON.stringify(jsonData, null, 2), (err) => {
-      if (err) {
-        res.status(500).send('Error writing the data file');
-        return;
-      }
-      res.status(200).json(jsonData.products[productIndex]);
-    });
-  });
+    await writeDataFile(JSON.stringify(data, null, 2)); 
+    res.status(200).json(data.products[productIndex]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error processing the request');
+  }
 });
 
 // Start the server
